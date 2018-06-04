@@ -62,8 +62,7 @@ export function isJSONfile(url) {
       .map(x => x)
       .join(',')});`;//parseList(value);
     } else if (_.isPlainObject(value)) {
-      return 
-      (key,value);
+      return transformJSONtoSass(key,value);
     } else {
       return `$${key}:${value ? value:''};`;
     } 
