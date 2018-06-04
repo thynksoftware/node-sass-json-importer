@@ -33,7 +33,7 @@ export default function(url, prev) {
     const json = Array.isArray(fileContents) ? { [extensionlessFilename]: fileContents } : fileContents;
 
     return {
-      contents: transformJSONtoSass(json),
+      contents: transformJSONtoSass(null,json),
     };
   } catch(error) {
     return new Error(`node-sass-json-importer: Error transforming JSON/JSON5 to SASS. Check if your JSON/JSON5 parses correctly. ${error}`);
@@ -44,42 +44,30 @@ export function isJSONfile(url) {
   return /\.json5?$/.test(url);
 }
 
-export function transformJSONtoSass(json) {
-  return Object.keys(json)
-    .filter(key => isValidKey(key))
-    .filter(key => json[key] !== '#')
-    .map(key => `$${key}: ${parseValue(json[key])};`)
-    .join('\n');
-}
-
-export function isValidKey(key) {
-  return /^[^$@:].*/.test(key)
-}
-
-export function parseValue(value) {
-  if (_.isArray(value)) {
-    return parseList(value);
-  } else if (_.isPlainObject(value)) {
-    return parseMap(value);
-  } else if (value === '') {
-    return '""'; // Return explicitly an empty string (Sass would otherwise throw an error as the variable is set to nothing)
-  } else {
-    return value;
+ export function transformJSONtoSass(oldKey, json) {
+    return Object.keys(json)
+      .filter(key => isValidKey(key))
+      .filter(key => json[key] !== '#')
+      .map(key => parseValue(`${oldKey?oldKey:''}${oldKey?'-':''}${key}`,json[key]))
+      .join('\n');
   }
-}
+  
+ export function isValidKey(key) {
+    return /^[^$@:].*/.test(key)
+  }
 
-export function parseList(list) {
-  return `(${list
-    .map(value => parseValue(value))
-    .join(',')},)`;
-}
-
-export function parseMap(map) {
-  return `(${Object.keys(map)
-    .filter(key => isValidKey(key))
-    .map(key => `${key}: ${parseValue(map[key])}`)
-    .join(',')})`;
-}
+ export function parseValue(key, value) {
+    if (_.isArray(value)) {
+      return `$${key}:(${value
+      .map(x => x)
+      .join(',')});`;//parseList(value);
+    } else if (_.isPlainObject(value)) {
+      return 
+      (key,value);
+    } else {
+      return `$${key}:${value ? value:''};`;
+    } 
+  }
 
 // Super-hacky: Override Babel's transpiled export to provide both
 // a default CommonJS export and named exports.
