@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Updater/node-sass-json-importer.git"
+    "url": "https://github.com/thynksoftware/node-sass-json-importer.git"
   },
   "keywords": [
     "sass",
@@ -24,8 +24,8 @@
   },
   "dependencies": {
     "is-there": "^4.0.0",
-    "json5": "^1.0",
-    "lodash": "^4.17"
+    "json5": "0.5.1",
+    "lodash": "^3.10.1"
   },
   "devDependencies": {
     "babel": "^5.8.23",
